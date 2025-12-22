@@ -1,10 +1,10 @@
 SUMMARY = "Murata Binaries"
 LICENSE = "BSD-3-Clause"
 
-LIC_FILES_CHKSUM = "file://${S}/cyw-bt-patch/LICENCE.cypress;md5=cbc5f665d04f741f1e006d2096236ba7"
+LIC_FILES_CHKSUM = "file://../cyw-bt-patch/LICENCE.cypress;md5=cbc5f665d04f741f1e006d2096236ba7"
 
 SRC_URI = " \
-        https://github.com/Infineon/ifx-linux-firmware/archive/refs/tags/release-v6.1.110-2025_0602.tar.gz;destsuffix=cyw-fmac-fw-ifx;name=cyw-fmac-fw-ifx \
+        git://github.com/Infineon/ifx-linux-firmware;protocol=http;branch=master;destsuffix=cyw-fmac-fw-ifx;name=cyw-fmac-fw-ifx \
         git://github.com/murata-wireless/cyw-fmac-fw;protocol=http;branch=kraken;destsuffix=cyw-fmac-fw;name=cyw-fmac-fw \
         git://github.com/murata-wireless/cyw-fmac-nvram;protocol=http;branch=kraken;destsuffix=cyw-fmac-nvram;name=cyw-fmac-nvram \
         git://github.com/murata-wireless/cyw-bt-patch;protocol=http;branch=master;destsuffix=cyw-bt-patch;name=cyw-bt-patch \
@@ -14,7 +14,6 @@ SRC_URI = " \
         file://load-bluetooth.sh \
         file://load-2ae-bt-hcd.sh \
         file://set-bluetooth.sh \
-        file://load-2ea-bt.sh \
         file://switch_module.sh \
         file://bluetooth_up.sh \
         file://hostapd-wifi6.conf \
@@ -27,7 +26,7 @@ SRC_URI = " \
         file://brcm_patchram_plus_usb_64bit \
 "
 
-SRC_URI[cyw-fmac-fw-ifx.sha256sum]="c9861c5dfe6f1a0136148530997ca1433a05e01dcd08a9bf962ec0c49ae0a558"
+SRCREV_cyw-fmac-fw-ifx="c49c34b51502b5e436955c4d5b4a8a5a51003281"
 SRCREV_cyw-fmac-fw="982c400fa3a9ecc865c1bd9615a49dc3a7b4443b"
 SRCREV_cyw-fmac-nvram="348fe6b5aabfb291ced0a6b50e5d2173fd990634"
 SRCREV_cyw-bt-patch="64ac86708253e12d7089cf75ef8dcc9b30594958"
@@ -37,23 +36,15 @@ SRCREV_cyw-fmac-utils-imx64="368bd9a4163e115468d79c238192b41f6266c523"
 SRCREV_default = "${AUTOREV}"
 SRCREV_FORMAT = "muratabinaries"
 
-S = "${WORKDIR}"
-B = "${WORKDIR}"
 DEPENDS = " libnl wpa-supplicant linux-firmware"
 
 do_compile () {
-	echo "Compiling: "
-        echo "Testing Make        Display:: ${MAKE}"
-        echo "Testing bindir      Display:: ${bindir}"
-        echo "Testing base_libdir Display:: ${base_libdir}"
-        echo "Testing sysconfdir  Display:: ${sysconfdir}"
-        echo "Testing S  Display:: ${S}"
-        echo "Testing B  Display:: ${B}"
-        echo "Testing D  Display:: ${D}"
-        echo "WORK_DIR :: ${WORKDIR}"
-	echo "MACHINE TYPE :: ${MACHINE}"
-        echo "PWD :: "
-        pwd
+    echo ${S}
+    echo ${B}
+    echo ${D}
+    echo ${WORKDIR}
+
+    :
 }
 
 PACKAGES:prepend = "murata-binaries-wlarm "
@@ -65,64 +56,66 @@ DO_INSTALL_64BIT_BINARIES_mx7 = "no"
 DO_INSTALL_64BIT_BINARIES_mx8 = "yes"
 
 do_install () {
-	echo "Installing: "
+    echo "Installing: " 
     install -d ${D}/${base_libdir}/firmware/cypress
     install -d ${D}/${base_libdir}/firmware/cypress/murata-master
-    install -d ${D}${sysconfdir}/firmware
-    install -d ${D}${sysconfdir}/firmware/murata-master
-	install -d ${D}/usr/sbin
-	install -d ${D}/etc/udev/rules.d
+    install -d ${D}/${base_libdir}/firmware/brcm
+    install -d ${D}/${base_libdir}/firmware/brcm/murata-master
+    install -d ${D}/usr/sbin
+    install -d ${D}/etc/udev/rules.d
     install -d ${D}/usr/share/murata_wireless
+    install -d ${D}/etc
 
 #   Copying *.HCD files to etc/firmware and etc/firmware/murata-master (using "_" before the name of the file in murata-master)
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4345C0_003.001.025.0187.0366.1MW.hcd ${D}${sysconfdir}/firmware/BCM4345C0_003.001.025.0187.0366.1MW.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43012C0_003.001.015.0303.0267.1LV.sAnt.hcd ${D}${sysconfdir}/firmware/BCM43012C0_003.001.015.0303.0267.1LV.sAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW43012C1_003.002.024.0036.0008.2GF.hcd ${D}${sysconfdir}/firmware/CYW43012C1_003.002.024.0036.0008.2GF.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW43341B0.1BW.hcd ${D}${sysconfdir}/firmware/BCM43341B0.1BW.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43430A1_001.002.009.0159.0528.1DX.hcd ${D}${sysconfdir}/firmware/BCM43430A1_001.002.009.0159.0528.1DX.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0275.1XA.sAnt.hcd ${D}${sysconfdir}/firmware/BCM4359D0_004.001.016.0241.0275.1XA.sAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4373A0_001.001.025.0103.0155.FCC.CE.2AE.hcd ${D}${sysconfdir}/firmware/BCM4373A0_001.001.025.0103.0155.FCC.CE.2AE.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4373A0_001.001.025.0103.0155.FCC.CE.2BC.hcd ${D}${sysconfdir}/firmware/BCM4373A0_001.001.025.0103.0155.FCC.CE.2BC.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW4343A2_001.003.016.0071.0017.1YN.hcd ${D}${sysconfdir}/firmware/CYW4343A2_001.003.016.0071.0017.1YN.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW55560A1_001.002.087.0269.0100.FCC.2EA.sAnt.hcd ${D}${sysconfdir}/firmware/CYW55560A1_001.002.087.0269.0100.FCC.2EA.sAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW55560A1_001.002.087.0269.0100.FCC.2EA.sAnt.hcd ${D}${sysconfdir}/firmware/BCM.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0275.2BZ.sAnt.hcd ${D}${sysconfdir}/firmware/BCM4359D0_004.001.016.0241.0275.2BZ.sAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW55500A1_001.002.032.0040.0033.FCC.2FY.2GY.hcd ${D}${sysconfdir}/firmware/CYW55500A1_001.002.032.0040.0033.FCC.2FY.2GY.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/README_BT_PATCHFILE.txt ${D}${sysconfdir}/firmware/README_BT_PATCHFILE.txt
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4345C0_003.001.025.0187.0366.1MW.hcd ${D}/${base_libdir}/firmware/brcm/BCM4345C0_003.001.025.0187.0366.1MW.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43012C0_003.001.015.0303.0267.1LV.sAnt.hcd ${D}/${base_libdir}/firmware/brcm/BCM43012C0_003.001.015.0303.0267.1LV.sAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW43012C1_003.002.024.0036.0008.2GF.hcd ${D}/${base_libdir}/firmware/brcm/CYW43012C1_003.002.024.0036.0008.2GF.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW43341B0.1BW.hcd ${D}/${base_libdir}/firmware/brcm/BCM43341B0.1BW.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43430A1_001.002.009.0159.0528.1DX.hcd ${D}/${base_libdir}/firmware/brcm/BCM43430A1_001.002.009.0159.0528.1DX.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0275.1XA.sAnt.hcd ${D}/${base_libdir}/firmware/brcm/BCM4359D0_004.001.016.0241.0275.1XA.sAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4373A0_001.001.025.0103.0155.FCC.CE.2AE.hcd ${D}/${base_libdir}/firmware/brcm/BCM4373A0_001.001.025.0103.0155.FCC.CE.2AE.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4373A0_001.001.025.0103.0155.FCC.CE.2BC.hcd ${D}/${base_libdir}/firmware/brcm/BCM4373A0_001.001.025.0103.0155.FCC.CE.2BC.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW4343A2_001.003.016.0071.0017.1YN.hcd ${D}/${base_libdir}/firmware/brcm/CYW4343A2_001.003.016.0071.0017.1YN.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW55560A1_001.002.087.0269.0100.FCC.2EA.sAnt.hcd ${D}/${base_libdir}/firmware/brcm/CYW55560A1_001.002.087.0269.0100.FCC.2EA.sAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW55560A1_001.002.087.0269.0100.FCC.2EA.sAnt.hcd ${D}/${base_libdir}/firmware/brcm/BCM.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0275.2BZ.sAnt.hcd ${D}/${base_libdir}/firmware/brcm/BCM4359D0_004.001.016.0241.0275.2BZ.sAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW55500A1_001.002.032.0040.0033.FCC.2FY.2GY.hcd ${D}/${base_libdir}/firmware/brcm/CYW55500A1_001.002.032.0040.0033.FCC.2FY.2GY.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/README_BT_PATCHFILE.txt ${D}/${base_libdir}/firmware/brcm/README_BT_PATCHFILE.txt
 
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4345C0_003.001.025.0187.0366.1MW.hcd   ${D}${sysconfdir}/firmware/murata-master/_BCM4345C0_003.001.025.0187.0366.1MW.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43012C0_003.001.015.0303.0267.1LV.sAnt.hcd  ${D}${sysconfdir}/firmware/murata-master/_BCM43012C0_003.001.015.0303.0267.1LV.sAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43012C0_003.001.015.0300.0266.1LV.dAnt.hcd ${D}${sysconfdir}/firmware/murata-master/_BCM43012C0_003.001.015.0300.0266.1LV.dAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW43012C1_003.002.024.0036.0008.2GF.hcd ${D}${sysconfdir}/firmware/murata-master/_CYW43012C1_003.002.024.0036.0008.2GF.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW43341B0.1BW.hcd  ${D}${sysconfdir}/firmware/murata-master/_BCM43341B0.1BW.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43430A1_001.002.009.0159.0528.1DX.hcd  ${D}${sysconfdir}/firmware/murata-master/_BCM43430A1_001.002.009.0159.0528.1DX.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0275.1XA.sAnt.hcd ${D}${sysconfdir}/firmware/murata-master/_BCM4359D0_004.001.016.0241.0275.1XA.sAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0274.1XA.dAnt.hcd ${D}${sysconfdir}/firmware/murata-master/_BCM4359D0_004.001.016.0241.0274.1XA.dAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4373A0_001.001.025.0103.0155.FCC.CE.2AE.hcd ${D}${sysconfdir}/firmware/murata-master/_BCM4373A0_001.001.025.0103.0155.FCC.CE.2AE.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4373A0_001.001.025.0103.0155.FCC.CE.2BC.hcd ${D}${sysconfdir}/firmware/murata-master/_BCM4373A0_001.001.025.0103.0155.FCC.CE.2BC.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW4343A2_001.003.016.0071.0017.1YN.hcd ${D}${sysconfdir}/firmware/murata-master/_CYW4343A2_001.003.016.0071.0017.1YN.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0275.2BZ.sAnt.hcd ${D}${sysconfdir}/firmware/murata-master/_BCM4359D0_004.001.016.0241.0275.2BZ.sAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0274.2BZ.dAnt.hcd ${D}${sysconfdir}/firmware/murata-master/_BCM4359D0_004.001.016.0241.0274.2BZ.dAnt.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW4373A0_001.001.025.0119.0000.2AE.USB_FCC.hcd ${D}${sysconfdir}/firmware/murata-master/_CYW4373A0_001.001.025.0119.0000.2AE.USB_FCC.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW55500A1_001.002.032.0040.0033.FCC.2FY.2GY.hcd ${D}${sysconfdir}/firmware/murata-master/_CYW55500A1_001.002.032.0040.0033.FCC.2FY.2GY.hcd
-    install -m 444 ${WORKDIR}/cyw-bt-patch/README_BT_PATCHFILE.txt ${D}${sysconfdir}/firmware/murata-master/README_BT_PATCHFILE.txt
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4345C0_003.001.025.0187.0366.1MW.hcd   ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM4345C0_003.001.025.0187.0366.1MW.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43012C0_003.001.015.0303.0267.1LV.sAnt.hcd  ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM43012C0_003.001.015.0303.0267.1LV.sAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43012C0_003.001.015.0300.0266.1LV.dAnt.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM43012C0_003.001.015.0300.0266.1LV.dAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW43012C1_003.002.024.0036.0008.2GF.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_CYW43012C1_003.002.024.0036.0008.2GF.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW43341B0.1BW.hcd  ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM43341B0.1BW.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM43430A1_001.002.009.0159.0528.1DX.hcd  ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM43430A1_001.002.009.0159.0528.1DX.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0275.1XA.sAnt.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM4359D0_004.001.016.0241.0275.1XA.sAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0274.1XA.dAnt.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM4359D0_004.001.016.0241.0274.1XA.dAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4373A0_001.001.025.0103.0155.FCC.CE.2AE.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM4373A0_001.001.025.0103.0155.FCC.CE.2AE.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4373A0_001.001.025.0103.0155.FCC.CE.2BC.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM4373A0_001.001.025.0103.0155.FCC.CE.2BC.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW4343A2_001.003.016.0071.0017.1YN.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_CYW4343A2_001.003.016.0071.0017.1YN.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0275.2BZ.sAnt.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM4359D0_004.001.016.0241.0275.2BZ.sAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/BCM4359D0_004.001.016.0241.0274.2BZ.dAnt.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_BCM4359D0_004.001.016.0241.0274.2BZ.dAnt.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW4373A0_001.001.025.0119.0000.2AE.USB_FCC.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_CYW4373A0_001.001.025.0119.0000.2AE.USB_FCC.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/CYW55500A1_001.002.032.0040.0033.FCC.2FY.2GY.hcd ${D}/${base_libdir}/firmware/brcm/murata-master/_CYW55500A1_001.002.032.0040.0033.FCC.2FY.2GY.hcd
+    install -m 444 ${WORKDIR}/cyw-bt-patch/README_BT_PATCHFILE.txt ${D}/${base_libdir}/firmware/brcm/murata-master/README_BT_PATCHFILE.txt
 
 
 #   Copying FW and CLM BLOB files (*.bin, *.clm_blob) to lib/firmware/cypress folder
 #   From Murata GitHub
-	install -m 444 ${WORKDIR}/cyw-fmac-fw/*.bin ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${WORKDIR}/cyw-fmac-fw/*.bin ${D}/${base_libdir}/firmware/cypress
 #   From IFX GitHub
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac43022-sdio.trxs ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac55500-sdio.trxse ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac55572-pcie.trxse ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac55572-sdio.trxse ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac43012-sdio.bin ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac43439-sdio.bin ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac43455-sdio.bin ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac54591-pcie.bin ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac54591-sdio.bin ${D}/${base_libdir}/firmware/cypress
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac4373-sdio.industrial.bin ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.2AE.bin
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac4373-sdio.bin ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.2BC.bin
+    FW_SRC=${WORKDIR}/cyw-fmac-fw-ifx/firmware
+    install -m 444 ${FW_SRC}/cyfmac43022-sdio.trxs ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac55500-sdio.trxse ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac55572-pcie.trxse ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac55572-sdio.trxse ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac43012-sdio.bin ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac43439-sdio.bin ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac43455-sdio.bin ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac54591-pcie.bin ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac54591-sdio.bin ${D}/${base_libdir}/firmware/cypress
+    install -m 444 ${FW_SRC}/cyfmac4373-sdio.industrial.bin ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.2AE.bin
+    install -m 444 ${FW_SRC}/cyfmac4373-sdio.bin ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.2BC.bin
 
 #   Rename clm blob files accordingly
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac4354-sdio.1BB.clm_blob ${D}/${base_libdir}/firmware/cypress/cyfmac4354-sdio.clm_blob
@@ -159,22 +152,22 @@ do_install () {
 	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac43439-sdio.1YN.txt ${D}/${base_libdir}/firmware/cypress/cyfmac43439-sdio.txt
 	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac4373-sdio.2BC.txt ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.2BC.txt
 	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac4373-sdio.2AE.txt ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.2AE.txt
-	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac55500-sdio.2FY.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.2FY.txt
+    install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac55500-sdio.2FY.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.2FY.txt
     install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac55500-sdio.2GY.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.2GY.txt
+
 
 	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac5557x-pcie_sdio.sant.2EA_2EC.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55572-sdio.txt
 	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac5557x-pcie_sdio.sant.2EA_2EC.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55572-pcie.txt
 
 # Setting the default to 2AE
     install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac4373-sdio.2AE.txt      ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.txt
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac4373-sdio.industrial.bin         ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.bin
+    install -m 444 ${FW_SRC}/cyfmac4373-sdio.industrial.bin         ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.bin
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac4373-sdio.2AE.clm_blob    ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.clm_blob
 
 # Setting the default to 2FY
     install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac55500-sdio.2FY.txt      ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.txt
-    install -m 444 ${WORKDIR}/ifx-linux-firmware-release-v6.1.110-2025_0602/firmware/cyfmac55500-sdio.trxse         ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.trxse
+    install -m 444 ${FW_SRC}/cyfmac55500-sdio.trxse         ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.trxse
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac55500-sdio.2FY.STAIndoor.clm_blob    ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.clm_blob
-
 
 #   For 2BZ
 	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac54591-sdio.2ant.2BZ.txt ${D}/${base_libdir}/firmware/cypress/cyfmac54591-sdio.txt
@@ -198,12 +191,11 @@ do_install () {
 	fi
 
 #   Based on MACHINE type
-    install -m 755 ${S}/set_module.sh ${D}/usr/sbin/set_module.sh
-    install -m 755 ${S}/load-2ae-bt-hcd.sh ${D}/usr/sbin/load-2ae-bt-hcd.sh
-    install -m 755 ${S}/murata_test_version.sh ${D}/usr/sbin/murata_test_version.sh
+    install -m 755 ${WORKDIR}/set_module.sh ${D}/usr/sbin/set_module.sh
+    install -m 755 ${WORKDIR}/load-2ae-bt-hcd.sh ${D}/usr/sbin/load-2ae-bt-hcd.sh
+    install -m 755 ${WORKDIR}/murata_test_version.sh ${D}/usr/sbin/murata_test_version.sh
 
 #   For loading 2EA@BT
-	install -m 755 ${WORKDIR}/load-2ea-bt.sh ${D}/usr/sbin/load-2ea-bt.sh
 	install -m 755 ${WORKDIR}/load-bluetooth.sh ${D}/usr/sbin/load-bluetooth.sh
 	install -m 755 ${WORKDIR}/set-bluetooth.sh ${D}/usr/sbin/set-bluetooth.sh
 	install -m 755 ${WORKDIR}/switch_module.sh ${D}/usr/sbin/switch_module.sh
@@ -214,17 +206,20 @@ do_install () {
 
 PACKAGES =+ "${PN}-mfgtest"
 
-FILES:${PN} += "${base_libdir}/firmware/"
+FILES:${PN} += "${base_libdir}/firmware"
+FILES:${PN} += "${base_libdir}/firmware/*"
+FILES:${PN} += "${base_libdir}/firmware/brcm"
+FILES:${PN} += "${base_libdir}/firmware/brcm/murata-master"
 FILES:${PN} += "${bindir}"
 FILES:${PN} += "${sbindir}"
-FILES:${PN} += "{sysconfdir}/firmware"
+FILES:${PN} += "${sysconfdir}/firmware"
+FILES:${PN} += "${base_libdir}"
+FILES:${PN} += "usr/share/murata_wireless"
 
 FILES:${PN}-mfgtest = " \
 	/usr/bin/wl \
-    /usr/share/murata_wireless \
 "
 
 INSANE_SKIP:${PN} += "build-deps"
 INSANE_SKIP:${PN} += "file-rdeps"
-
 
