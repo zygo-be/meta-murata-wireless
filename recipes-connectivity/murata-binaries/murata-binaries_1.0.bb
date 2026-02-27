@@ -26,8 +26,8 @@ SRC_URI = " \
         file://brcm_patchram_plus_usb_64bit \
 "
 
-SRCREV_cyw-fmac-fw-ifx="68e87eea38af2d9d0729d025854ddf13c79760e5"
-SRCREV_cyw-fmac-fw="8b566019ea71c29e7200239a8fea75c32ff3365a"
+SRCREV_cyw-fmac-fw-ifx="c6c73c37e89b088624f7970fb0a7ef535c5dee0b"
+SRCREV_cyw-fmac-fw="0e0c0d46a3660edd82c81ed4c40e6d935f524e55"
 SRCREV_cyw-fmac-nvram="cfc5fb6453a0feefac289b98b0dcc8d9a21a205c"
 SRCREV_cyw-bt-patch="64ac86708253e12d7089cf75ef8dcc9b30594958"
 SRCREV_cyw-fmac-utils-imx32="dad9ed86bf6691910197bc91d42a45ea8175180c"
@@ -102,7 +102,7 @@ do_install () {
 
 #   Copying FW and CLM BLOB files (*.bin, *.clm_blob) to lib/firmware/cypress folder
 #   From Murata GitHub
-    install -m 444 ${WORKDIR}/cyw-fmac-fw/*.bin ${D}/${base_libdir}/firmware/cypress
+    #install -m 444 ${WORKDIR}/cyw-fmac-fw/*.bin ${D}/${base_libdir}/firmware/cypress
 #   From IFX GitHub
     FW_SRC=${WORKDIR}/cyw-fmac-fw-ifx/firmware
     install -m 444 ${FW_SRC}/cyfmac43022-sdio.trxs ${D}/${base_libdir}/firmware/cypress
@@ -126,19 +126,16 @@ do_install () {
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac4359-sdio.1WZ.clm_blob ${D}/${base_libdir}/firmware/cypress/cyfmac4359-pcie.clm_blob
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac54591-pcie.1XA.clm_blob ${D}/${base_libdir}/firmware/cypress/cyfmac54591-pcie.clm_blob
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac54591-sdio.2BZ.clm_blob ${D}/${base_libdir}/firmware/cypress/cyfmac54591-sdio.clm_blob
-    install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac4373-sdio.2AE.clm_blob ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.clm_blob
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac43439-sdio.1YN.clm_blob  ${D}/${base_libdir}/firmware/cypress/cyfmac43439-sdio.clm_blob 
-    install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac55572-sdio.2EA.clm_blob_STAIndoor  ${D}/${base_libdir}/firmware/cypress/cyfmac55572-sdio.clm_blob
-    install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac55572-pcie.2EA.clm_blob_STAIndoor  ${D}/${base_libdir}/firmware/cypress/cyfmac55572-pcie.clm_blob
-    install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac43022-sdio.2GF.IndoorSTA.clm_blob  ${D}/${base_libdir}/firmware/cypress/cyfmac43022-sdio.clm_blob
+    install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac43022-sdio.2GF.IndoorSTA.clm_blob  ${D}/${base_libdir}/firmware/cypress/cyfmac43022-sdio.clm_blob  
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac55500-sdio.2FY.STAIndoor.clm_blob  ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.2FY.clm_blob
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac55500-sdio.2GY.STAIndoor.clm_blob  ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.2GY.clm_blob
-    install -m 444 ${WORKDIR}/cyw-fmac-fw/README_CLM_BLOB.txt ${D}/${base_libdir}/firmware/cypress/README_CLM_BLOB.txt
-    install -m 444 ${WORKDIR}/cyw-fmac-fw/README_FW.txt ${D}/${base_libdir}/firmware/cypress/README_FW.txt
-
-
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac4373-sdio.2BC.clm_blob ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.2BC.clm_blob
+    install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac4373-sdio.2AE.clm_blob ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.clm_blob
     install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac4373-sdio.2AE.clm_blob ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.2AE.clm_blob
+
+    install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac55572-sdio.2EA.clm_blob_STAIndoor  ${D}/${base_libdir}/firmware/cypress/cyfmac55572-sdio.clm_blob
+    install -m 444 ${WORKDIR}/cyw-fmac-fw/cyfmac55572-pcie.2EA.clm_blob_STAIndoor  ${D}/${base_libdir}/firmware/cypress/cyfmac55572-pcie.clm_blob
 
 
 #   Copying NVRAM files (*.txt) to lib/firmware/cypress and lib/firmware/cypress/murata-master
@@ -155,9 +152,9 @@ do_install () {
     install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac55500-sdio.2FY.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.2FY.txt
     install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac55500-sdio.2GY.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55500-sdio.2GY.txt
 
+	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac5557x-pcie_sdio.dant.2EA_2EC.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55572-sdio.txt
+	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac5557x-pcie_sdio.dant.2EA_2EC.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55572-pcie.txt
 
-	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac5557x-pcie_sdio.sant.2EA_2EC.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55572-sdio.txt
-	install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac5557x-pcie_sdio.sant.2EA_2EC.txt ${D}/${base_libdir}/firmware/cypress/cyfmac55572-pcie.txt
 
 # Setting the default to 2AE
     install -m 444 ${WORKDIR}/cyw-fmac-nvram/cyfmac4373-sdio.2AE.txt      ${D}/${base_libdir}/firmware/cypress/cyfmac4373-sdio.txt
