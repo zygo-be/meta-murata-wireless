@@ -1,0 +1,19 @@
+commit a8dc9fb415db503d8a858f7a8e7eef9d7b64a235
+Author: Kas User <kas@example.com>
+Date:   Wed Oct 15 16:36:51 2025 +0200
+
+    Fix redefinition of static function.
+
+diff --git a/v6.1.110-backports/backport-include/linux/timer.h b/v6.1.110-backports/backport-include/linux/timer.h
+index 14467fb..dbb9907 100755
+--- a/backport-include/linux/timer.h
++++ b/backport-include/linux/timer.h
+@@ -72,7 +72,7 @@ static inline void timer_setup(struct timer_list *timer,
+ 	!LINUX_VERSION_IN_RANGE(4,19,255, 4,20,0) &&	\
+ 	!LINUX_VERSION_IN_RANGE(5,4,255, 5,5,0) &&	\
+ 	!LINUX_VERSION_IN_RANGE(5,10,215, 5,11,0) &&	\
+-	!LINUX_VERSION_IN_RANGE(5,15,154, 5,16,0)
++	!LINUX_VERSION_IN_RANGE(5,15,148, 5,16,0)
+ static inline int timer_delete_sync(struct timer_list *timer)
+ {
+ 	return del_timer_sync(timer);
